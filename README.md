@@ -11,11 +11,12 @@ https://github.com/inAudible-NG/tables
 FILE="/path/to/File"
 echo "Install missing dependencys ..."
 sudo apt-get install ffmpeg
+CHECKSUM=$(ffprobe $FILE &> /tmp/audible_checksum && cat /tmp/audible_checksum | grep checksum | rev | cut -d" " -f1 && rm /tmp/audible_checksum)
 git clone https://github.com/frank-dspeed/tables
 cd tables
-ACTIVATION=rcrack . -h $(ffprobe $FILE &> /tmp/audible_checksum && cat /tmp/audible_checksum | grep checksum | rev | cut -d" " -f1 && rm /tmp/audible_checksum) | grep "hex:" | cut -d: -f1
+AUDIBLE_ACTIVATION_BYTES=$(rcrack . -h $CHECKSUM | grep "hex:" | cut -d: -f1)
 
-ffmpeg -activation_bytes $ACTIVATION -i $FILE -vn -c:a copy output.mp4
+ffmpeg -activation_bytes $AUDIBLE_ACTIVATION_BYTES -i $FILE -vn -c:a copy output.mp4
 ```
 
 ## Manual Method
