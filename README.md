@@ -1,4 +1,4 @@
-# audible2oog
+# audible2mp4
 A Linux Toolkit based on Python2 at present to convert audible downloaded aax files to oog.
 
 How to get your activation bytes
@@ -6,37 +6,16 @@ How to get your activation bytes
 http://ffmpeg.org/ffmpeg-all.html#Audible-AAX
 https://github.com/inAudible-NG/tables
 
-
-
-
-
-
+git clone https://github.com/frank-dspeed/tables
+cd tables
 ```
-#!/bin/sh
-LANG="de_DE.UTF-8"
-
+#!/bin/bash
+FILE="/path/to/File"
 echo "Install missing dependencys ..."
 sudo apt-get install ffmpeg python-pip chromium
-sudo pip install requests
-sudo pip install selenium
+git clone https://github.com/frank-dspeed/tables
+cd tables
+ACTIVATION=rcrack . -h $(ffprobe $FILE &> /tmp/audible_checksum && cat /tmp/audible_checksum | grep checksum | rev | cut -d" " -f1 && rm /tmp/audible_checksum) | grep "hex:" | cut -d: -f1
 
-echo "Configure audible activator ..."
-mkdir aax2mp3tools
-cd aax2mp3tools
-wget https://github.com/inAudible-NG/audible-activator/archive/master.zip
-unzip master.zip
-wget https://chromedriver.storage.googleapis.com/2.35/chromedriver_linux64.zip
-unzip chromedriver_linux64.zip
-
-echo "Räume auf ..."
-rm master.zip
-rm chromedriver_linux64.zip
-
-echo "Starte nun den audible-Activator ..." 
-cd audible-activator-master
-echo "Bitte gib nun Dein audible-Username und das dazugehörige Passwort ein:"
-./audible-activator.py -l de
-
-echo "Bitte notiere Dir die 16 Stellen der ermittelten activation_bytes, beispielsweise 8a1ed00d"
-exit
+ffmpeg -activation_bytes $ACTIVATION -i $FILE -vn -c:a copy output.mp4
 ```
