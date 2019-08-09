@@ -1,21 +1,45 @@
 # audible2mp4
-A Linux Toolkit based on Python2 at present to convert audible downloaded aax files to oog.
+A Script that uses Audible-NG Rainbowtables to get the Audible Activation bytes from a .aax file and also runs ffmpeg to produce a none protected .mp4 file. http://ffmpeg.org/ffmpeg-all.html#Audible-AAX
 
 How to get your activation bytes
-
-http://ffmpeg.org/ffmpeg-all.html#Audible-AAX
 https://github.com/inAudible-NG/tables
 
-git clone https://github.com/frank-dspeed/tables
-cd tables
+## Script Method
+
 ```
 #!/bin/bash
 FILE="/path/to/File"
 echo "Install missing dependencys ..."
-sudo apt-get install ffmpeg python-pip chromium
+sudo apt-get install ffmpeg
 git clone https://github.com/frank-dspeed/tables
 cd tables
 ACTIVATION=rcrack . -h $(ffprobe $FILE &> /tmp/audible_checksum && cat /tmp/audible_checksum | grep checksum | rev | cut -d" " -f1 && rm /tmp/audible_checksum) | grep "hex:" | cut -d: -f1
 
 ffmpeg -activation_bytes $ACTIVATION -i $FILE -vn -c:a copy output.mp4
+```
+
+## Manual Method
+
+Install ffmpeg
+
+```
+sudo apt-get install ffmpeg
+```
+
+```
+ffprobe your.aax
+```
+
+find the checksum 
+
+```
+git clone https://github.com/frank-dspeed/tables
+cd tables
+rcrack . -h <checksum>
+```
+
+find the hex: bytes in the result
+
+```
+ffmpeg -activation_bytes <activation bytes from hex:> -i your.aax -vn -c:a copy output.mp4
 ```
